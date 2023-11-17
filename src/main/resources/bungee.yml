@@ -1,0 +1,4 @@
+name: Network
+version: '${project.version}'
+main: de.leghast.network.Network
+author: GhastCraftHD
