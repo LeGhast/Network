@@ -32,7 +32,7 @@ public class RankCommand extends Command implements TabExecutor {
 
                                 for(Rank rank : Rank.values()){
                                     if(rank.name().equalsIgnoreCase(args[2])){
-                                        main.getRankManager().setRank(target.getUniqueId(), rank, false);
+                                        main.getRankManager().setRank(target.getUniqueId(), rank);
                                         if(target != player) {
                                             player.sendMessage("§aSuccessfully changed " + main.getRankManager().getRank(target.getUniqueId()).getColor() + target.getName() + "§a's rank to" + rank.getDisplay());
                                             target.sendMessage(main.getRankManager().getRank(player.getUniqueId()).getColor() + player.getName() + " §aset your rank to " + rank.getDisplay());

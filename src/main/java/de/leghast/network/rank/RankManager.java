@@ -22,43 +22,40 @@ public class RankManager {
     }
 
     public Rank getRank(UUID uuid){
-        try{
-            PreparedStatement getPlayerRank;
-            getPlayerRank = network.getDatabase().getConnection().prepareStatement("SELECT player_rank FROM players WHERE player_uuid = ?");
-            getPlayerRank.setString(1, uuid.toString());
-            ResultSet result = getPlayerRank.executeQuery();
-            if(!result.isBeforeFirst()){
-                return null;
-            }else{
-                String rank = null;
-                while(result.next()){
-                    rank = result.getString("player_rank");
+        if(main.getRankCache().containsKey(uuid)){
+            return main.getRankManager().getRank(uuid);
+        }else {
+            try {
+                PreparedStatement getPlayerRank;
+                getPlayerRank = network.getDatabase().getConnection().prepareStatement("SELECT player_rank FROM players WHERE player_uuid = ?");
+                getPlayerRank.setString(1, uuid.toString());
+                ResultSet result = getPlayerRank.executeQuery();
+                if (!result.isBeforeFirst()) {
+                    return null;
+                } else {
+                    String rank = null;
+                    while (result.next()) {
+                        rank = result.getString("player_rank");
+                    }
+                    return Rank.valueOf(rank);
                 }
-                return Rank.valueOf(rank);
-
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return null;
             }
-        }catch (SQLException e){
-            e.printStackTrace();
-            return null;
         }
     }
 
-    public void setRank(UUID uuid, Rank rank, boolean firstJoin){
+    public void setRank(UUID uuid, Rank rank){
         if(ProxyServer.getInstance().getPlayer(uuid) != null){
             ProxiedPlayer player = ProxyServer.getInstance().getPlayer(uuid);
             try {
-                if(firstJoin){
-                    PreparedStatement setDefaultRank;
-                    setDefaultRank = network.getDatabase().getConnection().prepareStatement("INSERT INTO players (ID, player_uuid, player_rank) VALUES (NULL, ?, 'PLAYER')");
-                    setDefaultRank.setString(1, uuid.toString());
-                    setDefaultRank.executeUpdate();
-                }else{
-                    PreparedStatement setNewRank;
-                    setNewRank = network.getDatabase().getConnection().prepareStatement("UPDATE players SET player_rank = ? WHERE player_uuid = ?");
-                    setNewRank.setString(1, rank.name());
-                    setNewRank.setString(2, uuid.toString());
-                    setNewRank.executeUpdate();
-                }
+                PreparedStatement setNewRank;
+                setNewRank = network.getDatabase().getConnection().prepareStatement("UPDATE players SET player_rank = ? WHERE player_uuid = ?");
+                setNewRank.setString(1, rank.name());
+                setNewRank.setString(2, uuid.toString());
+                setNewRank.executeUpdate();
+                main.getRankCache().put(uuid, rank);
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
