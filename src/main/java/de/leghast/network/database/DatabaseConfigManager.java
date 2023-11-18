@@ -1,4 +1,4 @@
-package de.leghast.network.config;
+package de.leghast.network.database;
 
 import de.leghast.network.Network;
 import net.md_5.bungee.config.Configuration;
@@ -8,18 +8,18 @@ import net.md_5.bungee.config.YamlConfiguration;
 import java.io.File;
 import java.io.IOException;
 
-public class ConfigManager {
+public class DatabaseConfigManager {
 
     private Network network;
     private File file;
     private Configuration config;
-    public ConfigManager(Network network){
+    public DatabaseConfigManager(Network network){
         this.network = network;
         if(!network.getDataFolder().exists()){
             network.getDataFolder().mkdir();
         }
 
-        file = new File(network.getDataFolder(), "config.yml");
+        file = new File(network.getDataFolder(), "database.yml");
         if(!file.exists()){
             try {
                 file.createNewFile();

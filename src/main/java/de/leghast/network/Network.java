@@ -1,6 +1,6 @@
 package de.leghast.network;
 
-import de.leghast.network.config.ConfigManager;
+import de.leghast.network.database.DatabaseConfigManager;
 import de.leghast.network.database.Database;
 import de.leghast.network.rank.RankCommand;
 import de.leghast.network.rank.RankListener;
@@ -19,13 +19,12 @@ public final class Network extends Plugin {
     private RankSystem rankSystem;
 
     //CONFIG
-    private ConfigManager configManager;
+    private DatabaseConfigManager databaseConfigManager;
 
     @Override
     public void onEnable() {
         initialiseRankSystem();
         initialiseUtils();
-        initialiseConfig();
         initialiseDatabase();
     }
 
@@ -35,6 +34,7 @@ public final class Network extends Plugin {
     }
 
     private void initialiseDatabase(){
+        databaseConfigManager = new DatabaseConfigManager(this);
         database = new Database(this);
         try {
             database.connect();
@@ -55,15 +55,11 @@ public final class Network extends Plugin {
         getProxy().getPluginManager().registerCommand(this, new PingCommand());
     }
 
-    private void initialiseConfig(){
-        configManager = new ConfigManager(this);
-    }
-
     public Database getDatabase(){
         return database;
     }
 
-    public ConfigManager getConfigManager(){
-        return configManager;
+    public DatabaseConfigManager getDatabaseConfigManager(){
+        return databaseConfigManager;
     }
 }

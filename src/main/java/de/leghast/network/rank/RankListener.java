@@ -15,10 +15,14 @@ public class RankListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PostLoginEvent e){
-        if(main.getRankManager().getRank(e.getPlayer().getUniqueId()) == null){
-            main.getRankManager().setRank(e.getPlayer().getUniqueId(), Rank.PLAYER);
-            main.getRankCache().put(e.getPlayer().getUniqueId(), main.getRankManager().getRank(e.getPlayer().getUniqueId()));
+        System.out.println(main.getRankManager().hasDatabaseEntry(e.getPlayer().getUniqueId()));
+        if(!main.getRankManager().hasDatabaseEntry(e.getPlayer().getUniqueId())){
+            main.getRankManager().setRank(e.getPlayer().getUniqueId(), Rank.PLAYER, true);
+            System.out.println("Set player rank to Player");
+        }else{
+            System.out.println("Did not set player rank");
         }
+        main.getRankCache().put(e.getPlayer().getUniqueId(), main.getRankManager().getRank(e.getPlayer().getUniqueId()));
     }
 
     @EventHandler

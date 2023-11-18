@@ -32,7 +32,7 @@ public class RankCommand extends Command implements TabExecutor {
 
                                 for(Rank rank : Rank.values()){
                                     if(rank.name().equalsIgnoreCase(args[2])){
-                                        main.getRankManager().setRank(target.getUniqueId(), rank);
+                                        main.getRankManager().setRank(target.getUniqueId(), rank, false);
                                         if(target != player) {
                                             player.sendMessage("§aSuccessfully changed " + main.getRankManager().getRank(target.getUniqueId()).getColor() + target.getName() + "§a's rank to" + rank.getDisplay());
                                             target.sendMessage(main.getRankManager().getRank(player.getUniqueId()).getColor() + player.getName() + " §aset your rank to " + rank.getDisplay());
@@ -63,19 +63,23 @@ public class RankCommand extends Command implements TabExecutor {
     @Override
     public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
         List<String> results = new ArrayList<>();
-        if(args.length == 1){
-            results.add("set");
-            return results.stream().filter(val -> val.toLowerCase().startsWith(args[0].toLowerCase())).collect(Collectors.toList());
-        }else if(args.length == 2){
-            for(ProxiedPlayer player : ProxyServer.getInstance().getPlayers()){
-                results.add(player.getName());
+        if(sender instanceof ProxiedPlayer player){
+            if(main.getRankManager().hasRank(player.getUniqueId(), Rank.ADMINISTRATOR)){
+                if(args.length == 1){
+                    results.add("set");
+                    return results.stream().filter(val -> val.toLowerCase().startsWith(args[0].toLowerCase())).collect(Collectors.toList());
+                }else if(args.length == 2){
+                    for(ProxiedPlayer players : ProxyServer.getInstance().getPlayers()){
+                        results.add(players.getName());
+                    }
+                    return results.stream().filter(val -> val.toLowerCase().startsWith(args[1].toLowerCase())).collect(Collectors.toList());
+                }else if(args.length == 3){
+                    for(Rank rank : Rank.values()){
+                        results.add(rank.name());
+                    }
+                    return results.stream().filter(val -> val.toLowerCase().startsWith(args[2].toLowerCase())).collect(Collectors.toList());
+                }
             }
-            return results.stream().filter(val -> val.toLowerCase().startsWith(args[1].toLowerCase())).collect(Collectors.toList());
-        }else if(args.length == 3){
-            for(Rank rank : Rank.values()){
-                results.add(rank.name());
-            }
-            return results.stream().filter(val -> val.toLowerCase().startsWith(args[2].toLowerCase())).collect(Collectors.toList());
         }
 
         return new ArrayList<>();

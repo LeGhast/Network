@@ -18,9 +18,9 @@ public class Database {
 
     public Database(Network main){
         this.main = main;
-        URL = main.getConfigManager().getUrl();
-        USERNAME = main.getConfigManager().getUsername();
-        PASSWORD = main.getConfigManager().getPassword();
+        URL = main.getDatabaseConfigManager().getUrl();
+        USERNAME = main.getDatabaseConfigManager().getUsername();
+        PASSWORD = main.getDatabaseConfigManager().getPassword();
     }
 
     public void connect() throws SQLException {

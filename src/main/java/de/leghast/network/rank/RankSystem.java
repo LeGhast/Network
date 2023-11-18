@@ -23,5 +23,8 @@ public class RankSystem {
     public HashMap<UUID, Rank> getRankCache(){
         return rankCache;
     }
+    public Network getNetwork(){
+        return main;
+    }
 
 }

@@ -1,8 +1,6 @@
 package de.leghast.network.rank;
 
 import de.leghast.network.Network;
-import de.leghast.network.rank.Rank;
-import de.leghast.network.rank.RankSystem;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
@@ -23,22 +21,19 @@ public class RankManager {
 
     public Rank getRank(UUID uuid){
         if(main.getRankCache().containsKey(uuid)){
-            return main.getRankManager().getRank(uuid);
+            return main.getRankCache().get(uuid);
         }else {
             try {
                 PreparedStatement getPlayerRank;
                 getPlayerRank = network.getDatabase().getConnection().prepareStatement("SELECT player_rank FROM players WHERE player_uuid = ?");
                 getPlayerRank.setString(1, uuid.toString());
                 ResultSet result = getPlayerRank.executeQuery();
-                if (!result.isBeforeFirst()) {
-                    return null;
-                } else {
                     String rank = null;
                     while (result.next()) {
                         rank = result.getString("player_rank");
                     }
+                    main.getRankCache().put(uuid, Rank.valueOf(rank));
                     return Rank.valueOf(rank);
-                }
             } catch (SQLException e) {
                 e.printStackTrace();
                 return null;
@@ -46,18 +41,44 @@ public class RankManager {
         }
     }
 
-    public void setRank(UUID uuid, Rank rank){
+    public boolean hasDatabaseEntry(UUID uuid){
+        try{
+            PreparedStatement getPlayerRank;
+            getPlayerRank = network.getDatabase().getConnection().prepareStatement("SELECT player_rank FROM players WHERE player_uuid = ?");
+            getPlayerRank.setString(1, uuid.toString());
+            ResultSet result = getPlayerRank.executeQuery();
+            return result.isBeforeFirst();
+        }catch(SQLException e){
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public void setRank(UUID uuid, Rank rank, boolean firstJoin){
         if(ProxyServer.getInstance().getPlayer(uuid) != null){
             ProxiedPlayer player = ProxyServer.getInstance().getPlayer(uuid);
-            try {
-                PreparedStatement setNewRank;
-                setNewRank = network.getDatabase().getConnection().prepareStatement("UPDATE players SET player_rank = ? WHERE player_uuid = ?");
-                setNewRank.setString(1, rank.name());
-                setNewRank.setString(2, uuid.toString());
-                setNewRank.executeUpdate();
-                main.getRankCache().put(uuid, rank);
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
+            if(firstJoin){
+                try {
+                    PreparedStatement setNewRank;
+                    setNewRank = network.getDatabase().getConnection().prepareStatement("INSERT INTO players (ID, player_uuid, player_rank) VALUES (NULL, ?, ?)");
+                    setNewRank.setString(1, uuid.toString());
+                    setNewRank.setString(2, rank.name());
+                    setNewRank.executeUpdate();
+                    main.getRankCache().put(uuid, rank);
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }else{
+                try {
+                    PreparedStatement setNewRank;
+                    setNewRank = network.getDatabase().getConnection().prepareStatement("UPDATE players SET player_rank = ? WHERE player_uuid = ?");
+                    setNewRank.setString(1, rank.name());
+                    setNewRank.setString(2, uuid.toString());
+                    setNewRank.executeUpdate();
+                    main.getRankCache().put(uuid, rank);
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
     }
