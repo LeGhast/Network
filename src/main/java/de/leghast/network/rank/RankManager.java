@@ -60,7 +60,7 @@ public class RankManager {
             if(firstJoin){
                 try {
                     PreparedStatement setNewRank;
-                    setNewRank = network.getDatabase().getConnection().prepareStatement("INSERT INTO players (ID, player_uuid, player_rank) VALUES (NULL, ?, ?)");
+                    setNewRank = network.getDatabase().getConnection().prepareStatement("INSERT INTO players (player_uuid, player_rank) VALUES (?, ?)");
                     setNewRank.setString(1, uuid.toString());
                     setNewRank.setString(2, rank.name());
                     setNewRank.executeUpdate();

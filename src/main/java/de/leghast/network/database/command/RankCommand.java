@@ -1,5 +1,7 @@
-package de.leghast.network.rank;
+package de.leghast.network.database.command;
 
+import de.leghast.network.rank.Rank;
+import de.leghast.network.rank.RankSystem;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -34,7 +36,7 @@ public class RankCommand extends Command implements TabExecutor {
                                     if(rank.name().equalsIgnoreCase(args[2])){
                                         main.getRankManager().setRank(target.getUniqueId(), rank, false);
                                         if(target != player) {
-                                            player.sendMessage("§aSuccessfully changed " + main.getRankManager().getRank(target.getUniqueId()).getColor() + target.getName() + "§a's rank to" + rank.getDisplay());
+                                            player.sendMessage("§aSuccessfully changed " + main.getRankManager().getRank(target.getUniqueId()).getColor() + target.getName() + "§a's rank to " + rank.getDisplay());
                                             target.sendMessage(main.getRankManager().getRank(player.getUniqueId()).getColor() + player.getName() + " §aset your rank to " + rank.getDisplay());
                                         }else{
                                             player.sendMessage("§aSuccessfully changed your rank to " + rank.getDisplay());
