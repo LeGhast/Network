@@ -1,4 +1,4 @@
-package de.leghast.network.database.command;
+package de.leghast.network.command;
 
 import de.leghast.network.Network;
 import net.md_5.bungee.api.CommandSender;

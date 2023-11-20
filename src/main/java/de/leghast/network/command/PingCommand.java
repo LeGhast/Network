@@ -1,4 +1,4 @@
-package de.leghast.network.database.command;
+package de.leghast.network.command;
 
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;

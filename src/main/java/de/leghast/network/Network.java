@@ -2,15 +2,15 @@ package de.leghast.network;
 
 import de.leghast.network.database.DatabaseConfigManager;
 import de.leghast.network.database.Database;
-import de.leghast.network.database.command.HubCommand;
+import de.leghast.network.command.HubCommand;
 import de.leghast.network.listener.PlayerDisconnectListener;
 import de.leghast.network.listener.PostLoginListener;
 import de.leghast.network.listener.ServerKickListener;
-import de.leghast.network.database.command.RankCommand;
+import de.leghast.network.command.RankCommand;
 import de.leghast.network.rank.RankSystem;
 import de.leghast.network.util.DatabaseUtil;
-import de.leghast.network.database.command.PingCommand;
-import de.leghast.network.database.command.WasCommand;
+import de.leghast.network.command.PingCommand;
+import de.leghast.network.command.WasCommand;
 import de.leghast.network.util.ServerUtil;
 import net.md_5.bungee.api.plugin.Plugin;
 

@@ -1,4 +1,4 @@
-package de.leghast.network.database.command;
+package de.leghast.network.command;
 
 import de.leghast.network.rank.Rank;
 import de.leghast.network.rank.RankSystem;
