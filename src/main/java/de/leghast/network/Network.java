@@ -46,11 +46,7 @@ public final class Network extends Plugin {
     private void initialiseDatabase(){
         databaseConfigManager = new DatabaseConfigManager(this);
         database = new Database(this);
-        try {
-            database.connect();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        database.connect();
     }
 
     private void initialiseRankSystem(){

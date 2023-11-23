@@ -27,7 +27,7 @@ public class RankManager {
                 PreparedStatement getPlayerRank;
                 getPlayerRank = network.getDatabase().getConnection().prepareStatement("SELECT player_rank FROM players WHERE player_uuid = ?");
                 getPlayerRank.setString(1, uuid.toString());
-                ResultSet result = getPlayerRank.executeQuery();
+                ResultSet result = network.getDatabase().executeQuery(getPlayerRank);
                     String rank = null;
                     while (result.next()) {
                         rank = result.getString("player_rank");
@@ -46,7 +46,7 @@ public class RankManager {
             PreparedStatement getPlayerRank;
             getPlayerRank = network.getDatabase().getConnection().prepareStatement("SELECT player_rank FROM players WHERE player_uuid = ?");
             getPlayerRank.setString(1, uuid.toString());
-            ResultSet result = getPlayerRank.executeQuery();
+            ResultSet result = network.getDatabase().executeQuery(getPlayerRank);
             return result.isBeforeFirst();
         }catch(SQLException e){
             e.printStackTrace();
@@ -63,7 +63,7 @@ public class RankManager {
                     setNewRank = network.getDatabase().getConnection().prepareStatement("INSERT INTO players (player_uuid, player_rank) VALUES (?, ?)");
                     setNewRank.setString(1, uuid.toString());
                     setNewRank.setString(2, rank.name());
-                    setNewRank.executeUpdate();
+                    network.getDatabase().executeUpdate(setNewRank);
                     main.getRankCache().put(uuid, rank);
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
@@ -74,7 +74,7 @@ public class RankManager {
                     setNewRank = network.getDatabase().getConnection().prepareStatement("UPDATE players SET player_rank = ? WHERE player_uuid = ?");
                     setNewRank.setString(1, rank.name());
                     setNewRank.setString(2, uuid.toString());
-                    setNewRank.executeUpdate();
+                    network.getDatabase().executeUpdate(setNewRank);
                     main.getRankCache().put(uuid, rank);
                 } catch (SQLException e) {
                     throw new RuntimeException(e);

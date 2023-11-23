@@ -6,6 +6,7 @@ public enum Rank {
 
     ADMINISTRATOR("#E97777", "Admin"),
     STAFF("#FFCF96", "Staff"),
+    VIP("#95BDFF", "VIP"),
     PREMIUM("#BEADFA", "Premium"),
     PLAYER("#79AC78",  "Player");
 
