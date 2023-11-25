@@ -21,12 +21,16 @@ public class DatabaseUtil {
             PreparedStatement getPlayerEntry;
             getPlayerEntry = network.getDatabase().getConnection().prepareStatement("SELECT * FROM players WHERE player_uuid = ?");
             getPlayerEntry.setString(1, uuid.toString());
-            ResultSet result = getPlayerEntry.executeQuery();
+            ResultSet result = network.getDatabase().executeQuery(getPlayerEntry);
             return result.isBeforeFirst();
         }catch(SQLException e){
             e.printStackTrace();
             return false;
         }
+    }
+
+    public void createDatabaseEntry(UUID uuid){
+        network.getRankSystem().getRankManager().setRank(uuid, Rank.PLAYER, true);
     }
 
 
