@@ -21,7 +21,7 @@ public class DatabaseUtil {
             PreparedStatement getPlayerEntry;
             getPlayerEntry = network.getDatabase().getConnection().prepareStatement("SELECT * FROM players WHERE player_uuid = ?");
             getPlayerEntry.setString(1, uuid.toString());
-            ResultSet result = network.getDatabase().executeQuery(getPlayerEntry);
+            ResultSet result = getPlayerEntry.executeQuery();
             return result.isBeforeFirst();
         }catch(SQLException e){
             e.printStackTrace();
