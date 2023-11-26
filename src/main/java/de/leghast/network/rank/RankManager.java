@@ -1,5 +1,6 @@
 package de.leghast.network.rank;
 
+import com.mysql.cj.jdbc.exceptions.CommunicationsException;
 import de.leghast.network.Network;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -27,7 +28,7 @@ public class RankManager {
                 PreparedStatement getPlayerRank;
                 getPlayerRank = network.getDatabase().getConnection().prepareStatement("SELECT player_rank FROM players WHERE player_uuid = ?");
                 getPlayerRank.setString(1, uuid.toString());
-                ResultSet result = network.getDatabase().executeQuery(getPlayerRank);
+                ResultSet result = getPlayerRank.executeQuery();
                     String rank = null;
                     while (result.next()) {
                         rank = result.getString("player_rank");
@@ -35,7 +36,10 @@ public class RankManager {
                     main.getRankCache().put(uuid, Rank.valueOf(rank));
                     return Rank.valueOf(rank);
             } catch (SQLException e) {
-                e.printStackTrace();
+                if(e instanceof CommunicationsException){
+                    network.getDatabase().connect();
+                    return getRank(uuid);
+                }
                 return null;
             }
         }
@@ -46,10 +50,13 @@ public class RankManager {
             PreparedStatement getPlayerRank;
             getPlayerRank = network.getDatabase().getConnection().prepareStatement("SELECT player_rank FROM players WHERE player_uuid = ?");
             getPlayerRank.setString(1, uuid.toString());
-            ResultSet result = network.getDatabase().executeQuery(getPlayerRank);
+            ResultSet result = getPlayerRank.executeQuery();
             return result.isBeforeFirst();
         }catch(SQLException e){
-            e.printStackTrace();
+            if(e instanceof CommunicationsException){
+                network.getDatabase().connect();
+                return hasDatabaseEntry(uuid);
+            }
             return false;
         }
     }
@@ -63,10 +70,13 @@ public class RankManager {
                     setNewRank = network.getDatabase().getConnection().prepareStatement("INSERT INTO players (player_uuid, player_rank) VALUES (?, ?)");
                     setNewRank.setString(1, uuid.toString());
                     setNewRank.setString(2, rank.name());
-                    network.getDatabase().executeUpdate(setNewRank);
+                    setNewRank.executeUpdate();
                     main.getRankCache().put(uuid, rank);
                 } catch (SQLException e) {
-                    throw new RuntimeException(e);
+                    if(e instanceof CommunicationsException){
+                        network.getDatabase().connect();
+                        setRank(uuid, rank, true);
+                    }
                 }
             }else{
                 try {
@@ -74,10 +84,13 @@ public class RankManager {
                     setNewRank = network.getDatabase().getConnection().prepareStatement("UPDATE players SET player_rank = ? WHERE player_uuid = ?");
                     setNewRank.setString(1, rank.name());
                     setNewRank.setString(2, uuid.toString());
-                    network.getDatabase().executeUpdate(setNewRank);
+                    setNewRank.executeUpdate();
                     main.getRankCache().put(uuid, rank);
                 } catch (SQLException e) {
-                    throw new RuntimeException(e);
+                    if(e instanceof CommunicationsException){
+                        network.getDatabase().connect();
+                        setRank(uuid, rank, false);
+                    }
                 }
             }
         }
